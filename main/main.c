@@ -25,7 +25,7 @@ static const char *TAG = "car";
 #define LEDC_FREQ_HZ    5000
 
 // Remote controller MAC address
-static const uint8_t remote_mac[ESP_NOW_ETH_ALEN] = {0x64, 0xe8, 0x33, 0xad, 0x4f, 0xdc};
+static const uint8_t remote_mac[ESP_NOW_ETH_ALEN] = {0xDC, 0xB4, 0xD9, 0x9A, 0xCA, 0xF8};
 
 typedef struct {
     int8_t  throttle;   // -100 (reverse) to 100 (forward)
