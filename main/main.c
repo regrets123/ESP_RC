@@ -23,12 +23,18 @@ static const char *TAG = "car";
 #define SERVO_GPIO          GPIO_NUM_25
 
 // ── Motor LEDC ────────────────────────────────────────────────────────────────
+// Motor: Estink N20 geared DC motor, 12 V, 300 RPM
+//   MOTOR_MIN_DUTY is the minimum PWM needed to overcome gearbox stiction.
+//   Tune this up if the motor hums but doesn't move at low throttle,
+//   or down if there is a noticeable speed jump from stop.
 
 #define MOTOR_LEDC_TIMER    LEDC_TIMER_0
 #define MOTOR_LEDC_CHANNEL  LEDC_CHANNEL_0
 #define MOTOR_LEDC_MODE     LEDC_LOW_SPEED_MODE
-#define MOTOR_DUTY_RES      LEDC_TIMER_10_BIT
+#define MOTOR_DUTY_RES      LEDC_TIMER_10_BIT   // 0 – 1023
 #define MOTOR_FREQ_HZ       5000
+
+#define MOTOR_MIN_DUTY      250   // ~24 % — tune for your gearbox stiction
 
 // ── Servo LEDC ────────────────────────────────────────────────────────────────
 // Servo: Micro Servo MZ996
@@ -66,7 +72,12 @@ typedef struct {
 
 static void motor_set(int8_t throttle)
 {
-    uint32_t duty = (uint32_t)(abs(throttle) * 1023 / 100);
+    uint32_t duty = 0;
+    if (throttle != 0) {
+        // Scale remaining range [MOTOR_MIN_DUTY, 1023] across throttle [1, 100]
+        duty = MOTOR_MIN_DUTY +
+               (uint32_t)((abs(throttle) * (1023 - MOTOR_MIN_DUTY)) / 100);
+    }
 
     if (throttle > 0) {
         gpio_set_level(MOTOR_IN1_PIN, 1);
