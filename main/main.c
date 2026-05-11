@@ -31,16 +31,25 @@ static const char *TAG = "car";
 #define MOTOR_FREQ_HZ       5000
 
 // ── Servo LEDC ────────────────────────────────────────────────────────────────
+// Servo: Micro Servo MZ996
+//   Pulse width : 500 – 2500 µs  (0° – 180°)
+//   Frequency   : 50 Hz  (20 ms period)
+//   Dead band   : 5 µs
+//   Direction   : CCW as pulse increases (1000 → 2000 µs)
+//   Set SERVO_INVERT 1 if left/right steering feels backwards.
 
 #define SERVO_LEDC_TIMER    LEDC_TIMER_1
 #define SERVO_LEDC_CHANNEL  LEDC_CHANNEL_1
 #define SERVO_LEDC_MODE     LEDC_LOW_SPEED_MODE
-#define SERVO_DUTY_RES      LEDC_TIMER_14_BIT  // 16383 ticks @ 50Hz
+#define SERVO_DUTY_RES      LEDC_TIMER_14_BIT  // 16383 ticks @ 50 Hz
 #define SERVO_FREQ_HZ       50
 
 #define MS_TO_DUTY(ms)      ((uint32_t)(((ms) / 20.0f) * 16383))
-#define SERVO_MIN_DUTY      MS_TO_DUTY(0.5f)   // 0°
-#define SERVO_MAX_DUTY      MS_TO_DUTY(2.5f)   // 180°
+#define SERVO_MIN_DUTY      MS_TO_DUTY(0.5f)   //   0° — 500 µs
+#define SERVO_MID_DUTY      MS_TO_DUTY(1.5f)   //  90° — 1500 µs (straight)
+#define SERVO_MAX_DUTY      MS_TO_DUTY(2.5f)   // 180° — 2500 µs
+
+#define SERVO_INVERT        0   // set to 1 to reverse steering direction
 
 // ── Remote packet ─────────────────────────────────────────────────────────────
 
@@ -117,9 +126,14 @@ static void servo_set_angle(uint8_t angle)
 }
 
 // steering: -100 (left) to 100 (right) → 0° to 180°, center stick = 90°
+// MZ996 rotates CCW as pulse increases; flip SERVO_INVERT if direction is wrong.
 static void servo_set_from_steering(int8_t steering)
 {
+#if SERVO_INVERT
+    uint8_t angle = (uint8_t)((100 - steering) * 180 / 200);
+#else
     uint8_t angle = (uint8_t)((steering + 100) * 180 / 200);
+#endif
     servo_set_angle(angle);
 }
 
@@ -139,7 +153,7 @@ static void servo_init(void)
         .speed_mode = SERVO_LEDC_MODE,
         .channel    = SERVO_LEDC_CHANNEL,
         .timer_sel  = SERVO_LEDC_TIMER,
-        .duty       = SERVO_MIN_DUTY,   // start at 0° on boot
+        .duty       = SERVO_MID_DUTY,   // start centered (straight) on boot
         .hpoint     = 0,
     };
     ESP_ERROR_CHECK(ledc_channel_config(&channel));
