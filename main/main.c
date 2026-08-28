@@ -51,9 +51,9 @@ static const char *TAG = "car";
 #define SERVO_FREQ_HZ       50
 
 #define MS_TO_DUTY(ms)      ((uint32_t)(((ms) / 20.0f) * 16383))
-#define SERVO_MIN_DUTY      MS_TO_DUTY(0.5f)   //   0° — 500 µs
+#define SERVO_MIN_DUTY      MS_TO_DUTY(1.0f)   //   0° — 500 µs
 #define SERVO_MID_DUTY      MS_TO_DUTY(1.5f)   //  90° — 1500 µs (straight)
-#define SERVO_MAX_DUTY      MS_TO_DUTY(2.5f)   // 180° — 2500 µs
+#define SERVO_MAX_DUTY      MS_TO_DUTY(2.0f)   // 180° — 2500 µs
 
 #define SERVO_INVERT        0   // set to 1 to reverse steering direction
 
