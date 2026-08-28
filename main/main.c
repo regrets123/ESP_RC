@@ -15,12 +15,12 @@ static const char *TAG = "car";
 // ── Pin definitions ───────────────────────────────────────────────────────────
 
 // L293D motor driver pins
-#define MOTOR_IN1_PIN       GPIO_NUM_12
-#define MOTOR_IN2_PIN       GPIO_NUM_14
-#define MOTOR_ENABLE_PIN    GPIO_NUM_13
+#define MOTOR_IN1_PIN       GPIO_NUM_2
+#define MOTOR_IN2_PIN       GPIO_NUM_3
+#define MOTOR_ENABLE_PIN    GPIO_NUM_4
 
 // Servo pin
-#define SERVO_GPIO          GPIO_NUM_25
+#define SERVO_GPIO          GPIO_NUM_5
 
 // ── Motor LEDC ────────────────────────────────────────────────────────────────
 // Motor: Estink N20 geared DC motor, 12 V, 300 RPM
